@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "vuanem-scraper"
+version = "0.1.0"
+description = ""
+authors = ["HM <hieumdd@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "~3.9"
+Scrapy = "^2.6.1"
+scrapy-inline-requests = "^0.3.1"
+scrapy-fake-useragent = "^1.4.4"
+
+[tool.poetry.dev-dependencies]
+black = "^22.6.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
