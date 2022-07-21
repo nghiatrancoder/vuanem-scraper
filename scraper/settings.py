@@ -41,14 +41,14 @@ RETRY_HTTP_CODES = [
 ]
 
 DOWNLOADER_MIDDLEWARES = {
-    # "scrapy.downloadermiddlewares.useragent.UserAgentMiddleware": None,
-    # "scrapy.spidermiddlewares.referer.RefererMiddleware": 80,
-    # "scrapy.downloadermiddlewares.retry.RetryMiddleware": 90,
-    # "scrapy_fake_useragent.middleware.RandomUserAgentMiddleware": 120,
-    # "scrapy.downloadermiddlewares.cookies.CookiesMiddleware": 130,
-    # "scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware": 810,
-    # "scrapy.downloadermiddlewares.redirect.RedirectMiddleware": 900,
-    # "scraper.middlewares.ScraperDownloaderMiddleware": 1000,
+    "scrapy.downloadermiddlewares.useragent.UserAgentMiddleware": None,
+    "scrapy.spidermiddlewares.referer.RefererMiddleware": 80,
+    "scrapy.downloadermiddlewares.retry.RetryMiddleware": 90,
+    "scrapy_fake_useragent.middleware.RandomUserAgentMiddleware": 120,
+    "scrapy.downloadermiddlewares.cookies.CookiesMiddleware": 130,
+    "scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware": 810,
+    "scrapy.downloadermiddlewares.redirect.RedirectMiddleware": 900,
+    "scraper.middlewares.ScraperDownloaderMiddleware": 1000,
 }
 
 FEEDS = {"export/" + "%(name)s" + ".json": {"format": "json", "overwrite": True}}

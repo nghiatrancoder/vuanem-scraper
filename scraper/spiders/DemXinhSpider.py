@@ -60,6 +60,7 @@ class DemXinhSpider(scrapy.Spider):
         url = response.url
         id = response.css("#product_id::attr(value)").get()
         name = response.css("h1.title-name::text").get()
+        images = response.css("#imageGallery img::attr(src)").getall()
 
         sizes = response.css('li[data-name="kich_thuoc"]')
         depths = response.css('li[data-name="do_day"]')
@@ -105,5 +106,6 @@ class DemXinhSpider(scrapy.Spider):
         yield Product(
             name=name,
             url=url,
+            images=images,
             variants=variants,
         )

@@ -11,4 +11,5 @@ class ProductVariant:
 class Product:
     name: str
     url: str
+    images: list[str]
     variants: list[ProductVariant]
