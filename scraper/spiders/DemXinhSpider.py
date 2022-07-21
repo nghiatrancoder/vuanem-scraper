@@ -95,8 +95,7 @@ class DemXinhSpider(scrapy.Spider):
             variant_data = json.loads(variant_response.text)
 
             variant = ProductVariant(
-                size=size.attrib["data-value"],
-                depth=depth.attrib["data-value"],
+                config=size.attrib["data-value"] + "-" + depth.attrib["data-value"],
                 price=variant_data["price"],
                 sale_price=variant_data["price_new"],
             )

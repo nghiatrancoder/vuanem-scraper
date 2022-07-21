@@ -9,6 +9,7 @@ python = "~3.9"
 Scrapy = "^2.6.1"
 scrapy-inline-requests = "^0.3.1"
 scrapy-fake-useragent = "^1.4.4"
+chompjs = "^1.1.6"
 
 [tool.poetry.dev-dependencies]
 black = "^22.6.0"

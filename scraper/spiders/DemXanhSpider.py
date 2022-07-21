@@ -1,17 +1,16 @@
 import json
 from urllib.parse import urlencode
 
-from inline_requests import inline_requests
-
 import scrapy
+import chompjs
 
 from scraper.items import Product, ProductVariant
 
 
-class DemXinhSpider(scrapy.Spider):
+class DemXanhSpider(scrapy.Spider):
     name = "DemXanh"
 
-    root_url = "https://demxanh.com/"
+    root_url = "https://demxanh.com"
 
     def start_requests(self):
         cotton = {"path": "dem-bong-ep", "page": range(1, 3)}
@@ -21,7 +20,11 @@ class DemXinhSpider(scrapy.Spider):
         cheap = {"path": "dem-gia-re", "page": range(1, 2)}
 
         urls = [
-            self.root_url + "?" + urlencode({"page": page})
+            self.root_url
+            + "/"
+            + category["path"]
+            + ".html?"
+            + urlencode({"page": page})
             for category in [
                 cotton,
                 spring,
@@ -36,58 +39,33 @@ class DemXinhSpider(scrapy.Spider):
             yield scrapy.Request(url, callback=self.get_product_url)
 
     def get_product_url(self, response):
-        product_urls = response.css('.p-item > a::attr(href)').getall()
+        product_urls = response.css(".p-item > a::attr(href)").getall()
 
         for url in product_urls:
-            yield scrapy.Request(url, callback=self.get_product)
+            yield scrapy.Request(self.root_url + url, callback=self.get_product)
 
-    @inline_requests
     def get_product(self, response):
+        script = response.css('script:contains("var product_config_count")::text').get()
+        js_objects = chompjs.parse_js_object(script)
+
+        variant_list = js_objects["variant_list"]
+        product_info = js_objects["product_info"]
+
+        variants = [
+            ProductVariant(
+                config=variant['sku'],
+                price=variant["extend"]["market_price"],
+                sale_price=variant["sale_price"],
+            )
+            for variant in variant_list
+        ]
+
         url = response.url
-        id = response.css("#product_id::attr(value)").get()
-        name = response.css("h1.title-name::text").get()
-        images = response.css("#imageGallery img::attr(src)").getall()
-
-        sizes = response.css('li[data-name="kich_thuoc"]')
-        depths = response.css('li[data-name="do_day"]')
-
-        variant_query = {
-            "module": "products",
-            "view": "product",
-            "raw": 1,
-            "task": "change_price",
-        }
-        variant_url = self.root_url + "?" + urlencode(variant_query)
-
-        variants = []
-
-        for (
-            size,
-            depth,
-        ) in zip(sizes, depths):
-            variant_response = yield scrapy.FormRequest(
-                variant_url,
-                formdata={
-                    "id": id,
-                    "extended": json.dumps(
-                        {
-                            "kich_thuoc": size.attrib["data-id"],
-                            "do_day": depth.attrib["data-id"],
-                        }
-                    ),
-                },
-            )
-
-            variant_data = json.loads(variant_response.text)
-
-            variant = ProductVariant(
-                size=size.attrib["data-value"],
-                depth=depth.attrib["data-value"],
-                price=variant_data["price"],
-                sale_price=variant_data["price_new"],
-            )
-
-            variants.append(variant)
+        name = product_info["label"]
+        images = [
+            self.root_url + href
+            for href in response.css('a[data-fancybox="gallery"]::attr(href)').getall()
+        ]
 
         yield Product(
             name=name,

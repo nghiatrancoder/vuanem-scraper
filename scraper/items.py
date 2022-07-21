@@ -2,8 +2,7 @@ from dataclasses import dataclass
 
 @dataclass
 class ProductVariant:
-    size: str
-    depth: str
+    config: str
     price: str
     sale_price: str
 
