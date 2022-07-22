@@ -1,5 +1,6 @@
 import json
 from urllib.parse import urlencode
+from itertools import product
 
 import scrapy
 from inline_requests import inline_requests
@@ -77,7 +78,7 @@ class DemXinhSpider(scrapy.Spider):
         for (
             size,
             depth,
-        ) in zip(sizes, depths):
+        ) in product(sizes, depths):
             variant_response = yield scrapy.FormRequest(
                 variant_url,
                 formdata={
