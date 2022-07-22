@@ -11,14 +11,14 @@ from scraper.items import Product, ProductVariant
 class DemXinhSpider(scrapy.Spider):
     name = "DemXinh"
 
-    root_url = "https://demxinh.vn/"
+    root_url = "https://demxinh.vn"
 
     def start_requests(self):
 
-        cotton = {"cid": 172, "page": [1, 2]}
-        spring = {"cid": 169, "page": [1, 2, 3]}
-        latex = {"cid": 171, "page": [1, 2]}
-        foam = {"cid": 170, "page": [1, 2]}
+        cotton = {"cid": 172, "page": range(1, 3)}
+        spring = {"cid": 169, "page": range(1, 4)}
+        latex = {"cid": 171, "page": range(1, 3)}
+        foam = {"cid": 170, "page": range(1, 3)}
 
         default_query = {
             "module": "products",
@@ -27,10 +27,8 @@ class DemXinhSpider(scrapy.Spider):
             "raw": 1,
         }
 
-        urls = [
-            self.root_url
-            + "?"
-            + urlencode(
+        qss = [
+            urlencode(
                 {
                     **default_query,
                     "cid": category["cid"],
@@ -46,6 +44,11 @@ class DemXinhSpider(scrapy.Spider):
             for page in category["page"]
         ]
 
+        urls = [
+            f"{self.root_url}/?{qs}"
+            for qs in qss
+        ]
+
         for url in urls:
             yield scrapy.Request(url, callback=self.get_product_url)
 
@@ -57,10 +60,7 @@ class DemXinhSpider(scrapy.Spider):
 
     @inline_requests
     def get_product(self, response):
-        url = response.url
         id = response.css("#product_id::attr(value)").get()
-        name = response.css("h1.title-name::text").get()
-        images = response.css("#imageGallery img::attr(src)").getall()
 
         sizes = response.css('li[data-name="kich_thuoc"]')
         depths = response.css('li[data-name="do_day"]')
@@ -71,7 +71,7 @@ class DemXinhSpider(scrapy.Spider):
             "raw": 1,
             "task": "change_price",
         }
-        variant_url = self.root_url + "?" + urlencode(variant_query)
+        variant_url = f"{self.root_url}/?{urlencode(variant_query)}"
 
         variants = []
 
@@ -101,6 +101,10 @@ class DemXinhSpider(scrapy.Spider):
             )
 
             variants.append(variant)
+
+        url = response.url
+        name = response.css("h1.title-name::text").get()
+        images = response.css("#imageGallery img::attr(src)").getall()
 
         yield Product(
             name=name,
