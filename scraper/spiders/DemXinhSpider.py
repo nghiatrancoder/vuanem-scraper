@@ -1,9 +1,8 @@
 import json
 from urllib.parse import urlencode
 
-from inline_requests import inline_requests
-
 import scrapy
+from inline_requests import inline_requests
 
 from scraper.items import Product, ProductVariant
 

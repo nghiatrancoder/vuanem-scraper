@@ -42,9 +42,9 @@ class SieuThiNemSpider(scrapy.Spider):
         trows = response.css('table tbody tr[height="26"]')
         variants = [
             ProductVariant(
-                config=trow.css('td')[0].css('span::text').get(),
-                price=trow.css('td')[1].css('span::text').get(),
-                sale_price=trow.css('td')[2].css('span::text').get()
+                config=trow.css("td")[0].css("span::text").get(),
+                price=trow.css("td")[1].css("span::text").get(),
+                sale_price=trow.css("td")[2].css("span::text").get(),
             )
             for trow in trows
         ]
@@ -59,5 +59,3 @@ class SieuThiNemSpider(scrapy.Spider):
             images=images,
             variants=variants,
         )
-
-

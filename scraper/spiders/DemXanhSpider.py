@@ -52,7 +52,7 @@ class DemXanhSpider(scrapy.Spider):
 
         variants = [
             ProductVariant(
-                config=variant['sku'],
+                config=variant["sku"],
                 price=variant["extend"]["market_price"],
                 sale_price=variant["sale_price"],
             )
